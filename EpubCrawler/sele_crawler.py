@@ -2,6 +2,7 @@ from pyquery import PyQuery as pq
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By   
 from GenEpub import gen_epub
 from urllib.parse import urljoin
 import sys
@@ -118,7 +119,7 @@ def download_page(url, art, imgs):
     if config['waitContent']:
         WebDriverWait(driver, config['waitContent'], 0.5) \
             .until(wait_content_cb, "无法获取标题或内容")
-    html = driver.find_element_by_css_selector('body').get_attribute('outerHTML')
+    html = driver.find_element(By.CSS_SELECTOR, 'body').get_attribute('outerHTML')
     art.update(get_article(html, url))
     save_article(hash, art)
     print(f'{url} 下载成功')
