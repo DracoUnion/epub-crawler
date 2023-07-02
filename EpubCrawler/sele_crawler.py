@@ -167,6 +167,6 @@ def crawl_sele():
     for h in hdls: h.result()
     
     articles = [art for art in articles if art]
-    gen_epub(articles, imgs)
+    gen_epub(articles, imgs, limit=config['sizeLimit'])
     
     for d in drivers: d.close()
