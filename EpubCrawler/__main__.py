@@ -147,40 +147,6 @@ def update_config(cfg_fname, user_cfg):
             config['readTimeout'],
         )
 
-def gen_epub_paging(articles, imgs, config):
-    limit = size_str_to_int(config['sizeLimit'])
-    art_part = []
-    img_part = {}
-    total = 0
-    ipt = 1
-    for a in articles:
-        art_imgs = re.findall(r'src="\.\./Images/(\w{32}\.png)"', a['content'])
-        size = sum(
-            len(imgs.get(iname, b'')) 
-            for iname in art_imgs
-        )
-        if total + size >= limit:
-            art_part.insert(0, {
-                'title': config['name'] + f' PT{ipt}',
-                'content': f"<p>来源：<a href='{config['url']}'>{config['url']}</a></p>",
-            })
-            gen_epub(art_part, img_part)
-            art_part = []
-            img_part = {}
-            total = 0
-            ipt += 1
-        art_part.append(a)
-        img_part.update({
-            iname:imgs.get(iname, b'') 
-            for iname in art_imgs
-        })
-        total += size
-    if art_part:
-        art_part.insert(0, {
-            'title': config['name'] + f' PT{ipt}',
-            'content': f"<p>来源：<a href='{config['url']}'>{config['url']}</a></p>",
-        })
-        gen_epub(art_part, img_part)
 
 def main():
     cfg_fname = sys.argv[1] \
@@ -239,13 +205,7 @@ def main():
         
     for h in hdls: h.result()
     articles = [art for art in articles if art]
-            
-    total = sum(len(v) for _, v in imgs.items())
-    limit = size_str_to_int(config['sizeLimit'])
-    if total <= limit:
-        gen_epub(articles, imgs)
-    else:
-        gen_epub_paging(articles[1:], imgs, config)
+    gen_epub(articles, imgs, limit=config['sizeLimit'])
     print('done...')
     
 if __name__ == '__main__': main()
