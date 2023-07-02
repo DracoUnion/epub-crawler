@@ -31,5 +31,5 @@ config = {
     'waitContent': False,
     'debug': False,
     'selenium': False,
-    'sizeLimit': '100m',
+    'sizeLimit': '50m',
 }
