@@ -8,6 +8,7 @@ import time
 import re
 import base64
 import random
+import traceback
 from .util import *
 from .config import config
 
@@ -26,11 +27,11 @@ def get_img_src(el_img):
         if url: break
     return url
     
-def tr_download_img_safe(url, imgs, picname):
+def tr_download_img_safe(*args, **kw):
     try:
-        tr_download_img(url, imgs, picname)
-    except Exception as ex:
-        print(f'{url} 下载失败：{ex}')
+        tr_download_img(*args, **kw)
+    except:
+        traceback.print_exc()
 
 def tr_download_img(url, proxy, imgs, picname):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()

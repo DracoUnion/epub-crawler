@@ -11,6 +11,7 @@ import time
 from os import path
 import re
 import random
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 from readability import Document
@@ -73,11 +74,11 @@ def get_toc(html, base):
     return res
 
     
-def tr_download_page_safe(url, art, imgs):
+def tr_download_page_safe(*args, **kw):
     try:
-        tr_download_page(url, art, imgs)
-    except Exception as ex:
-        print(f'{url} 下载失败：{ex}')
+        tr_download_page(*args, **kw)
+    except:
+        traceback.print_exc()
 
 def tr_download_page(url, proxy, art, imgs):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
