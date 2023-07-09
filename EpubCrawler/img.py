@@ -71,6 +71,7 @@ def process_img_data_url(url, el_img, imgs, **kw):
     
 def process_img(html, imgs, **kw):
     kw.setdefault('img_prefix', 'img/')
+    kw.setdefault('task_idx', 0)
     
     root = pq(html)
     el_imgs = root('img')
@@ -91,7 +92,8 @@ def process_img(html, imgs, **kw):
         print(f'pic: {url} => {picname}')
         if picname not in imgs:
             if config['proxyOrder'] == 'squential':
-                pr = config['proxy'][i % len(config['proxy'])]
+                pr_idx = kw['task_idx'] + 1 + i
+                pr = config['proxy'][pr_idx % len(config['proxy'])]
             else:
                 pr = random.choice(config['proxy'])
             hdl = img_pool.submit(tr_download_img_safe, url, pr, imgs, picname)

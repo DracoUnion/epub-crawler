@@ -80,7 +80,7 @@ def tr_download_page_safe(*args, **kw):
     except:
         traceback.print_exc()
 
-def tr_download_page(url, proxy, art, imgs):
+def tr_download_page(tidx, url, proxy, art, imgs):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
     cache = load_article(hash)
     if cache is not None and config['cache']:
@@ -90,6 +90,7 @@ def tr_download_page(url, proxy, art, imgs):
             art['content'], imgs,
             page_url=url,
             img_prefix='../Images/',
+            task_idx=tidx,
         )
         return
     for i in range(config['retry']):
@@ -203,7 +204,7 @@ def main():
             pr = random.choice(config['proxy'])
         art = {}
         articles.append(art)
-        hdl = text_pool.submit(tr_download_page_safe, url, pr, art, imgs)
+        hdl = text_pool.submit(tr_download_page_safe, i, url, pr, art, imgs)
         hdls.append(hdl)
             
         
