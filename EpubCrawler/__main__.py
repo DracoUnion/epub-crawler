@@ -20,6 +20,7 @@ from .img import *
 from .config import config
 from .sele_crawler import crawl_sele
 from .common import *
+from .proxy import *
 
 warnings.filterwarnings("ignore")
 
@@ -37,7 +38,7 @@ def get_toc_from_cfg():
         check_status=config['checkStatus'],
         headers=config['headers'],
         timeout=config['timeout'],
-        proxies=config['proxy'],
+        proxies=next(config['proxyLoader']),
         verify=False,
     ).content.decode(config['encoding'], 'ignore')
     return get_toc(html, config['url'])
@@ -97,7 +98,7 @@ def tr_download_page(url, art, imgs):
             check_status=config['checkStatus'],
             headers=config['headers'],
             timeout=config['timeout'],
-            proxies=config['proxy'],
+            proxies=next(config['proxyLoader']),
             verify=False,
         ).content.decode(config['encoding'], 'ignore')
         r = get_article(html, url)
@@ -126,12 +127,9 @@ def update_config(cfg_fname, user_cfg):
     if not config['title']:
         config['title'] = 'title'
     
-    if config['proxy']:
-        proxies = {
-            'http': config['proxy'],
-            'https': config['proxy'],
-        }
-        config['proxy'] = proxies
+    if isinstance(config['proxy'], str):
+        config['proxy'] = config['proxy'].split(';')
+    config['proxyLoader'] = ProxyLoader(config['proxy'], config['proxyOrder'])
     
     set_img_pool(ThreadPoolExecutor(config['imgThreads']))
     
