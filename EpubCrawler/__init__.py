@@ -7,7 +7,7 @@ https://github.com/apachecn/epub-crawler"""
 from . import img
 from . import util
 
-__author__ = "ApacheCN"
-__email__ = "apachecn@163.com"
+__author__ = "wizardforcel"
+__email__ = "wizard.z@qq.com"
 __license__ = "SATA"
-__version__ = "2023.4.16.0"
+__version__ = "2023.7.9.0"
