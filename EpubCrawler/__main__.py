@@ -128,7 +128,7 @@ def update_config(cfg_fname, user_cfg):
     if not config['title']:
         config['title'] = 'title'
     
-    if config['proxy'] is None:
+    if config['proxy'] is None or len(config['proxy']) == 0:
         config['proxy'] = [None]
     elif isinstance(config['proxy'], str):
         config['proxy'] = config['proxy'].split(';')
