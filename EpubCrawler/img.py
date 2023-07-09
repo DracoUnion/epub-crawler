@@ -31,7 +31,7 @@ def tr_download_img_safe(url, imgs, picname):
     except Exception as ex:
         print(f'{url} 下载失败：{ex}')
 
-def tr_download_img(url, imgs, picname):
+def tr_download_img(url, proxy, imgs, picname):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
     cache = load_img(hash, config['optiMode'])
     if cache is not None and config['cache']:
@@ -45,7 +45,7 @@ def tr_download_img(url, imgs, picname):
         check_status=config['checkStatus'],
         retry=config['retry'],
         timeout=config['timeout'],
-        proxies=config['proxy'],
+        proxies=proxy,
         verify=False,
     ).content
     print(f'{url} 下载成功')
@@ -88,7 +88,11 @@ def process_img(html, imgs, **kw):
         picname = hashlib.md5(url.encode('utf-8')).hexdigest() + '.png'
         print(f'pic: {url} => {picname}')
         if picname not in imgs:
-            hdl = img_pool.submit(tr_download_img_safe, url, imgs, picname)
+            if config['proxyOrder'] == 'squential':
+                pr = config['proxy'][i % len(config['proxy'])]
+            else:
+                pr = random.choice(config['proxy'])
+            hdl = img_pool.submit(tr_download_img_safe, url, pr, imgs, picname)
             hdls.append(hdl)
             
         el_img.attr('src', kw['img_prefix'] + picname)

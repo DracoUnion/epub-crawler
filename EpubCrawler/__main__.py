@@ -20,7 +20,6 @@ from .img import *
 from .config import config
 from .sele_crawler import crawl_sele
 from .common import *
-from .proxy import *
 
 warnings.filterwarnings("ignore")
 
@@ -38,7 +37,7 @@ def get_toc_from_cfg():
         check_status=config['checkStatus'],
         headers=config['headers'],
         timeout=config['timeout'],
-        proxies=next(config['proxyLoader']),
+        proxies=config['proxy'][0],
         verify=False,
     ).content.decode(config['encoding'], 'ignore')
     return get_toc(html, config['url'])
@@ -79,7 +78,7 @@ def tr_download_page_safe(url, art, imgs):
     except Exception as ex:
         print(f'{url} 下载失败：{ex}')
 
-def tr_download_page(url, art, imgs):
+def tr_download_page(url, proxy, art, imgs):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
     cache = load_article(hash)
     if cache is not None and config['cache']:
@@ -98,7 +97,7 @@ def tr_download_page(url, art, imgs):
             check_status=config['checkStatus'],
             headers=config['headers'],
             timeout=config['timeout'],
-            proxies=next(config['proxyLoader']),
+            proxies=proxy,
             verify=False,
         ).content.decode(config['encoding'], 'ignore')
         r = get_article(html, url)
@@ -127,10 +126,13 @@ def update_config(cfg_fname, user_cfg):
     if not config['title']:
         config['title'] = 'title'
     
-    if isinstance(config['proxy'], str):
+    if config['proxy'] is None:
+        config['proxy'] = [None]
+    elif isinstance(config['proxy'], str):
         config['proxy'] = config['proxy'].split(';')
-    config['proxyLoader'] = ProxyLoader(config['proxy'], config['proxyOrder'])
-    
+    for i, pr in enumerate(config['proxy']):
+        if not pr: continue
+        config['proxy'][i] = {'http': pr, 'https': pr}
     set_img_pool(ThreadPoolExecutor(config['imgThreads']))
     
     if config['external']:
@@ -189,15 +191,19 @@ def main():
     
     text_pool = ThreadPoolExecutor(config['textThreads'])
     hdls = []
-    for url in toc:
+    for i, url in enumerate(toc):
         print(f'page: {url}')
         if not re.search(r'^https?://', url):
             articles.append({'title': url, 'content': ''})
             continue
         
+        if config['proxyOrder'] == 'squential':
+            pr = config['proxy'][i % len(config['proxy'])]
+        else:
+            pr = random.choice(config['proxy'])
         art = {}
         articles.append(art)
-        hdl = text_pool.submit(tr_download_page_safe, url, art, imgs)
+        hdl = text_pool.submit(tr_download_page_safe, url, pr, art, imgs)
         hdls.append(hdl)
             
         
