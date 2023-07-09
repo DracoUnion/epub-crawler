@@ -50,7 +50,7 @@ def tr_download_img(url, proxy, imgs, picname):
         proxies=proxy,
         verify=False,
     ).content
-    print(f'{url} {proxy} 下载成功')
+    print(f'{url} proxy:{proxy} 下载成功')
     data = opti_img(data, config['optiMode'], config['colors']) or b''
     imgs[picname] = data
     save_img(hash, config['optiMode'], data)

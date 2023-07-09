@@ -115,7 +115,7 @@ def tr_download_page(url, proxy, art, imgs):
         page_url=url,
         img_prefix='../Images/',
     )
-    print(f'{url} {proxy} 下载成功')
+    print(f'{url} proxy:{proxy} 下载成功')
     time.sleep(config['wait'])
     
 
