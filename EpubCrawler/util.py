@@ -145,3 +145,7 @@ def size_str_to_int(s):
 def extname(fname):
     m = re.search(r'\.(\w+)$', fname)
     return m.group(1) if m else ''
+
+def prdict(pr):
+    return None if pr is None \
+           else {'http': pr, 'https': pr}

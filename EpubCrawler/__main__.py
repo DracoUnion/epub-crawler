@@ -39,7 +39,7 @@ def get_toc_from_cfg():
         check_status=config['checkStatus'],
         headers=config['headers'],
         timeout=config['timeout'],
-        proxies=config['proxy'][0],
+        proxies=prdict(config['proxy'][0]),
         verify=False,
     ).content.decode(config['encoding'], 'ignore')
     return get_toc(html, config['url'])
@@ -99,7 +99,7 @@ def tr_download_page(url, proxy, art, imgs):
             check_status=config['checkStatus'],
             headers=config['headers'],
             timeout=config['timeout'],
-            proxies=proxy,
+            proxies=prdict(proxy),
             verify=False,
         ).content.decode(config['encoding'], 'ignore')
         r = get_article(html, url)
@@ -132,9 +132,7 @@ def update_config(cfg_fname, user_cfg):
         config['proxy'] = [None]
     elif isinstance(config['proxy'], str):
         config['proxy'] = config['proxy'].split(';')
-    for i, pr in enumerate(config['proxy']):
-        if not pr: continue
-        config['proxy'][i] = {'http': pr, 'https': pr}
+    
     set_img_pool(ThreadPoolExecutor(config['imgThreads']))
     
     if config['external']:

@@ -47,7 +47,7 @@ def tr_download_img(url, proxy, imgs, picname):
         check_status=config['checkStatus'],
         retry=config['retry'],
         timeout=config['timeout'],
-        proxies=proxy,
+        proxies=prdict(proxy),
         verify=False,
     ).content
     print(f'{url} proxy:{proxy} 下载成功')
