@@ -7,6 +7,7 @@ from pyquery import PyQuery as pq
 import time
 import re
 import base64
+import random
 from .util import *
 from .config import config
 

@@ -10,6 +10,7 @@ from pyquery import PyQuery as pq
 import time
 from os import path
 import re
+import random
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 from readability import Document
