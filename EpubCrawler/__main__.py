@@ -209,7 +209,9 @@ def main():
             
         
     for h in hdls: h.result()
+    # 过滤掉空文章和空图片
     articles = [art for art in articles if art]
+    imgs = {name:img for name, img in imgs.items() if img}
     gen_epub(articles, imgs, limit=config['sizeLimit'])
     print('done...')
     
