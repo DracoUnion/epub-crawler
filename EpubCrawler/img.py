@@ -45,17 +45,20 @@ def tr_download_img(url, proxy, imgs, picname):
         imgs[picname] = cache
         return
 
-    data = request_retry(
-        'GET', url,
-        headers=config['headers'],
-        check_status=config['checkStatus'],
-        retry=config['retry'],
-        timeout=config['timeout'],
-        proxies=prdict(proxy),
-        verify=False,
-    ).content
-    if not is_valid_img(data):
-        raise ValueError(f'{url} 图片无法解析')
+    for i in range(config['retry']):
+        data = request_retry(
+            'GET', url,
+            headers=config['headers'],
+            check_status=config['checkStatus'],
+            retry=config['retry'],
+            timeout=config['timeout'],
+            proxies=prdict(proxy),
+            verify=False,
+        ).content
+        if is_valid_img(data):
+            break
+        if i == config['retry'] - 1:
+            raise ValueError(f'{url} 图片无法解析')
     print(f'{url} proxy:{proxy} 下载成功')
     data = opti_img(data, config['optiMode'], config['colors']) or b''
     imgs[picname] = data
