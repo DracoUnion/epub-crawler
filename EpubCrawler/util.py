@@ -12,6 +12,7 @@ from os import path
 import uuid
 import tempfile
 import json
+from imgyaso.util import is_img_data
 
 RE_DATA_URL = r'^data:image/\w+;base64,'
 
@@ -25,6 +26,9 @@ is_pic = lambda x: x.endswith('.jpg') or \
                    x.endswith('.tiff') or \
                    x.endswith('.bmp') or \
                    x.endswith('.webp')
+
+def is_valid_img(data):
+    return b'<svg ' in data or is_img_data(data)
 
 def safe_mkdir(dir):
     try: os.mkdir(dir)
@@ -106,7 +110,7 @@ def load_img(hash, opti):
     if not path.isfile(fname):
         return None
     img = open(fname, 'rb').read()
-    if img != b'':
+    if is_valid_img(img):
         return img
     else:
         return None

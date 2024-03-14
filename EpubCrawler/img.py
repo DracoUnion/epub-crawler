@@ -9,7 +9,6 @@ import re
 import base64
 import random
 import traceback
-from imgyaso.util import is_img_data
 from .util import *
 from .config import config
 
@@ -34,8 +33,6 @@ def tr_download_img_safe(*args, **kw):
     except:
         traceback.print_exc()
 
-def is_valid_img(data):
-    return b'<svg ' in data or is_img_data(data)
 
 def tr_download_img(url, proxy, imgs, picname):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
