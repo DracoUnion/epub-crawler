@@ -108,7 +108,7 @@ def tr_download_page(tidx, url, proxy, art, imgs):
            (r['title'] and r['content']):
            break
         if i == config['retry'] - 1:
-            raise Exception(f'{url} 标题或内容为空')
+            raise ValueError(f'{url} 标题或内容为空')
     art.update(r)
     save_article(hash, art)
     art['content'] = process_img(
