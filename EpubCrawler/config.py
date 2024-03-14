@@ -26,7 +26,7 @@ config = {
     'textThreads': 8,
     'imgThreads': 24,
     'external': None,
-    'checkStatus': False,
+    'checkStatus': True,
     'checkBlank': True,
     'cache': True,
     'waitContent': False,
