@@ -80,7 +80,7 @@ def tr_download_page_safe(*args, **kw):
     except:
         traceback.print_exc()
 
-def tr_download_page(tidx, url, proxy, art, imgs):
+def tr_download_page(tidx, url, art, imgs):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
     cache = load_article(hash)
     if cache is not None and config['cache']:
@@ -100,7 +100,7 @@ def tr_download_page(tidx, url, proxy, art, imgs):
             check_status=config['checkStatus'],
             headers=config['headers'],
             timeout=config['timeout'],
-            proxies=prdict(proxy),
+            proxies=prdict(config['proxy']),
             verify=False,
         ).content.decode(config['encoding'], 'ignore')
         r = get_article(html, url)
@@ -116,7 +116,7 @@ def tr_download_page(tidx, url, proxy, art, imgs):
         page_url=url,
         img_prefix='../Images/',
     )
-    print(f'{url} proxy:{proxy} 下载成功')
+    print(f'{url} proxy:{config["proxy"]} 下载成功')
     time.sleep(config['wait'])
     
 
@@ -129,11 +129,12 @@ def update_config(cfg_fname, user_cfg):
     if not config['title']:
         config['title'] = 'title'
     
+    '''
     if config['proxy'] is None or len(config['proxy']) == 0:
         config['proxy'] = [None]
     elif isinstance(config['proxy'], str):
         config['proxy'] = config['proxy'].split(';')
-    
+    '''
     set_img_pool(ThreadPoolExecutor(config['imgThreads']))
     
     if config['external']:
@@ -198,13 +199,15 @@ def main():
             articles.append({'title': url, 'content': ''})
             continue
         
+        '''
         if config['proxyOrder'] == 'squential':
             pr = config['proxy'][i % len(config['proxy'])]
         else:
             pr = random.choice(config['proxy'])
+        '''
         art = {}
         articles.append(art)
-        hdl = text_pool.submit(tr_download_page_safe, i, url, pr, art, imgs)
+        hdl = text_pool.submit(tr_download_page_safe, i, url, art, imgs)
         hdls.append(hdl)
             
         

@@ -34,7 +34,7 @@ def tr_download_img_safe(*args, **kw):
         traceback.print_exc()
 
 
-def tr_download_img(url, proxy, imgs, picname):
+def tr_download_img(url, imgs, picname):
     hash = hashlib.md5(url.encode('utf-8')).hexdigest()
     cache = load_img(hash, config['optiMode'])
     if cache is not None and config['cache']:
@@ -49,14 +49,14 @@ def tr_download_img(url, proxy, imgs, picname):
             check_status=config['checkStatus'],
             retry=config['retry'],
             timeout=config['timeout'],
-            proxies=prdict(proxy),
+            proxies=prdict(config['proxy']),
             verify=False,
         ).content
         if is_valid_img(data):
             break
         if i == config['retry'] - 1:
             raise ValueError(f'{url} 图片无法解析')
-    print(f'{url} proxy:{proxy} 下载成功')
+    print(f'{url} proxy:{config["proxy"]} 下载成功')
     data = opti_img(data, config['optiMode'], config['colors']) or b''
     imgs[picname] = data
     save_img(hash, config['optiMode'], data)
@@ -77,7 +77,7 @@ def process_img_data_url(url, el_img, imgs, **kw):
     
 def process_img(html, imgs, **kw):
     kw.setdefault('img_prefix', 'img/')
-    kw.setdefault('task_idx', 0)
+    # kw.setdefault('task_idx', 0)
     
     root = pq(html)
     el_imgs = root('img')
@@ -97,12 +97,14 @@ def process_img(html, imgs, **kw):
         picname = hashlib.md5(url.encode('utf-8')).hexdigest() + '.png'
         print(f'pic: {url} => {picname}')
         if picname not in imgs:
+            '''
             if config['proxyOrder'] == 'squential':
                 pr_idx = kw['task_idx'] + 1 + i
                 pr = config['proxy'][pr_idx % len(config['proxy'])]
             else:
                 pr = random.choice(config['proxy'])
-            hdl = img_pool.submit(tr_download_img_safe, url, pr, imgs, picname)
+            '''
+            hdl = img_pool.submit(tr_download_img_safe, url, imgs, picname)
             hdls.append(hdl)
             
         el_img.attr('src', kw['img_prefix'] + picname)
