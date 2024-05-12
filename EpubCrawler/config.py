@@ -21,7 +21,7 @@ config = {
     'connTimeout': 10,
     'readTimeout': 60,
 	'imgSrc': ['data-src', 'data-original-src', 'src'],
-    'proxy': [None],
+    'proxy': None,
     'proxyOrder': 'sequential',
     'textThreads': 8,
     'imgThreads': 24,
