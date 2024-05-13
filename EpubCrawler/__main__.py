@@ -39,7 +39,7 @@ def get_toc_from_cfg():
         check_status=config['checkStatus'],
         headers=config['headers'],
         timeout=config['timeout'],
-        proxies=prdict(config['proxy'][0]),
+        proxies=prdict(config['proxy']),
         verify=False,
     ).content.decode(config['encoding'], 'ignore')
     return get_toc(html, config['url'])
